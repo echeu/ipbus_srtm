@@ -1,0 +1,10 @@
+This code is used in conjuction with the ironman framework to communicate with the SRTM via ipbus
+
+Usage: python3 ipbus_srtm.py
+
+Notes:
+Calls write_reg.exe (in /home/root/ipbus) to write register values. The python mmap function appears to write to the register twice.
+
+To build write_reg.exe, just do
+
+  make
