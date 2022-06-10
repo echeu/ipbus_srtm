@@ -25,9 +25,9 @@ int main(int argc, char** argv) {
      str << argv[1];
      str >> std::hex >> bram_pbase;
      //     bram_pbase = std::stoi(argv[1], 0, 16);
-     std::cout << "address: " << std::hex << bram_pbase << std::endl;
+     //std::cout << "address: " << std::hex << bram_pbase << std::endl;
      base_addr = (bram_pbase/4096) * 4096;
-     std::cout << "base address: " << std::hex << base_addr << std::endl;
+     //std::cout << "base address: " << std::hex << base_addr << std::endl;
 
      if (bram_pbase > 0 && (fd = open("/dev/mem", O_RDWR | O_SYNC)) != -1) {
 	 
@@ -35,13 +35,17 @@ int main(int argc, char** argv) {
 	 bram32_vptr = (int *)mmap(NULL, bram_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, base_addr);
 
 	 int offset = (bram_pbase%4096)/4;
-	 std::cout << "offset: " << offset << std::endl;
-	 std::cout << "reg value: " << std::hex << bram32_vptr[offset] << std::endl;
+	 //std::cout << "offset: " << offset << std::endl;
+	 int num = bram32_vptr[offset];
+	 std::cout << "0x" <<  std::hex << num ;
+	 //std::cout <<  num ;
 
 	 //	 for (int i=0; i<32; i++) {
 	 //	   std::cout << "offset: " << i << std::hex << bram32_vptr[i] << std::endl;
 	 //	 }
 	 close(fd);
+
+	return num;
      }
    }
 }

@@ -38,23 +38,29 @@ class DataInteraction:
 
   # read request - reads from /dev/mem
   def read(self, addr, size):
-    baseaddr = int(addr/4096)
-    baseaddr *= 4096
-    f = open('/dev/mem','r+b')
-    reg = mmap(f.fileno(), 4096, offset=baseaddr)
+    #baseaddr = int(addr/4096)
     print("ipbus_srtm: reading offset: ", hex(addr))
-    print("baseaddr: ", hex(baseaddr))
 
+    # use subprocess to read memory
+    result = subprocess.Popen(["/home/root/ipbus/read_reg.exe",hex(addr)],stdout=subprocess.PIPE)
+    output = result.stdout.read()
+    num_str = output.decode("utf-8")
+    number = int(num_str, 0)
+
+    # old way
+    #f = open('/dev/mem','r+b')
+    #reg = mmap(f.fileno(), 4096, offset=baseaddr)
     # return value in memory
-    number = struct.unpack('I',reg[addr%4096:addr%4096+4])[0]
+    #number = struct.unpack('I',reg[addr%4096:addr%4096+4])[0]
+
     print("number: ", hex(number))
 
     return IPBusWord.build(number)
 
   # write request - writes into /dev/mem
   def write(self, addr, data):
-    baseaddr = int(addr/4096)
-    baseaddr *= 4096
+    #baseaddr = int(addr/4096)
+    #baseaddr *= 4096
     print("ipbus_srtm: writing offset: ", hex(addr))
     num0 = int(data[0])
     num1 = int(data[1])
@@ -79,15 +85,22 @@ class DataInteraction:
   # RMWBITS request - reads register and writes over selected bits
   def rmwbits(self, addr, data):
 
-    baseaddr = int(addr/4096)
-    baseaddr *= 4096
+    #baseaddr = int(addr/4096)
+    #baseaddr *= 4096
 
-    # open /dev/mem and read register value
-    f = open('/dev/mem','r+b')
-    reg = mmap(f.fileno(), 4096, offset=baseaddr)
+    # use subprocess to read memory
+    result = subprocess.Popen(["/home/root/ipbus/read_reg.exe",hex(addr)],stdout=subprocess.PIPE)
+    output = result.stdout.read()
+    num_str = output.decode("utf-8")
+    reg_val = int(num_str, 0)
 
-    # return value in memory
-    reg_val = struct.unpack('I',reg[addr%4096:addr%4096+4])[0]
+    # old way
+    ## open /dev/mem and read register value
+    #f = open('/dev/mem','r+b')
+    #reg = mmap(f.fileno(), 4096, offset=baseaddr)
+    #
+    ## return value in memory
+    #reg_val = struct.unpack('I',reg[addr%4096:addr%4096+4])[0]
 
     num0 = int(data[0])
     num1 = int(data[1])
